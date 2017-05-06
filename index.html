@@ -30,6 +30,8 @@
         this.bonus=0;
         this.bonusText='';
 	    
+    var life=3;
+    var lifeTxt;
 	 
         
         this.map = null;
@@ -67,7 +69,7 @@
             this.load.crossOrigin = 'anonymous';
 		
             this.load.image('dot', 'assets/dot.png');
-	  
+	     this.load.image('dot3', 'assets/dot3.png');
             this.load.image('tiles', 'assets/pacman-tiles.png');
             this.load.spritesheet('pacman', 'assets/pacman.png', 32, 32);
             this.load.tilemap('map', 'assets/pacman-map.json', null, Phaser.Tilemap.TILED_JSON);
@@ -86,14 +88,15 @@
 	   
 		
             this.map.createFromTiles(7, this.safetile, 'dot', this.layer, this.dots);
-	  
+	  this.map.createFromTiles(35, this.safetile, 'dot3', this.layer, this.dots2);
            
 		
 		//  The dots will need to be offset by 6px to put them back in the middle of the grid
             this.dots.setAll('x', 6, false, false, 1);
             this.dots.setAll('y', 6, false, false, 1);
 		
-	   
+	    this.dots3.setAll('x', 6, false, false, 1);
+            this.dots3.setAll('y', 6, false, false, 1);
 		
             //  Pacman should collide with everything except the safe tile
             this.map.setCollisionByExclusion([this.safetile], true, this.layer);
@@ -110,23 +113,7 @@
 		
 		this.scoreText = game.add.text(10, 0, 'Score: 0', { fontSize: '20px Verdana', fill: '#FF4500' });
 	
-            this.bonusText = game.add.text(150, 0, 'Bonus: 0', { fontSize: '20px Verdana', fill: '#FFFFFF' });
-		
-           lives = game.add.group();
-            game.add.text(game.world.width - 340, 500, 'Lives : ', { fontSize: '34px Arial', fill: 'white' });
-            
-            for (var i = 0; i < 3; i++) 
-		    {
-			var pacman = lives.create(game.world.width - 235 + (30 * i), 517, 'pacman');
-			pacman.anchor.setTo(0.5, 0.5);
-			pacman.angle = 0;
-			pacman.alpha = 0.4;
-		    }
-		var sprite = game.add.sprite(417, 465, 'coin');
-	    
-	    game.add.tween(sprite).to( { alpha: 0 }, 30000, Phaser.Easing.Linear.None, true);
-	   
-        
+            lifeTxt = game.add.text(330,0,'Life: 3', {font: '20px 	Lucida Console',  fill: '#FFFFFF'});
         },
 	    
         checkKeys: function () {
@@ -235,6 +222,22 @@
             }
         },
 	    
+	    eatDot3: function (pacman, dot3) {
+           dot3.kill();
+           bonus += 10;
+           bonusTxt.text = 'Bonus : ' + bonus;
+           scoreTxt.text = 'Score : ' + bonus;
+            
+           var audio = new Audio('assets/bonus.mp3');
+           audio.play()
+           
+           if (this.dots.total === 0)
+           {
+               this.dots.callAll('revive');
+           }
+           
+        },
+	    
 	    
 	  
 	    
@@ -242,7 +245,7 @@
           
             this.physics.arcade.collide(this.pacman, this.layer);
             this.physics.arcade.overlap(this.pacman, this.dots, this.eatDot, null, this);
-		
+		  this.physics.arcade.overlap(this.pacman, this.dots3, this.eatDot3, null, this);
 		
             this.marker.x = this.math.snapToFloor(Math.floor(this.pacman.x), this.gridsize) / this.gridsize;
             this.marker.y = this.math.snapToFloor(Math.floor(this.pacman.y), this.gridsize) / this.gridsize;
