@@ -30,8 +30,7 @@
         this.bonus=0;
         this.bonusText='';
 	    
-	    this.lives=3;
-	    this.livesText='';
+	 
         
         this.map = null;
         this.layer = null;
@@ -83,7 +82,7 @@
             this.layer = this.map.createLayer('Pacman');
 		
             this.dots = this.add.physicsGroup();
-		 this.dots3 = this.add.physicsGroup();
+		
 	   
 		
             this.map.createFromTiles(7, this.safetile, 'dot', this.layer, this.dots);
@@ -113,8 +112,21 @@
 	
             this.bonusText = game.add.text(150, 0, 'Bonus: 0', { fontSize: '20px Verdana', fill: '#FFFFFF' });
 		
-            this.livesText = game.add.text(300, 0, 'Lives: 3', { fontSize: '20px Verdana', fill: '#FFFF00' });
-		
+           lives = game.add.group();
+            game.add.text(game.world.width - 340, 500, 'Lives : ', { fontSize: '34px Arial', fill: 'white' });
+            
+            for (var i = 0; i < 3; i++) 
+		    {
+			var pacman = lives.create(game.world.width - 235 + (30 * i), 517, 'pacman');
+			pacman.anchor.setTo(0.5, 0.5);
+			pacman.angle = 0;
+			pacman.alpha = 0.4;
+		    }
+		var sprite = game.add.sprite(417, 465, 'coin');
+	    
+	    game.add.tween(sprite).to( { alpha: 0 }, 30000, Phaser.Easing.Linear.None, true);
+	   
+        
         },
 	    
         checkKeys: function () {
