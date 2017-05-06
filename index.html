@@ -68,7 +68,7 @@
             this.load.crossOrigin = 'anonymous';
 		
             this.load.image('dot', 'assets/dot.png');
-	    this.load.image('dots', 'assets/dots.png');
+	    this.load.image('dot3', 'assets/dot3.png');
             this.load.image('tiles', 'assets/pacman-tiles.png');
             this.load.spritesheet('pacman', 'assets/pacman.png', 32, 32);
             this.load.tilemap('map', 'assets/pacman-map.json', null, Phaser.Tilemap.TILED_JSON);
@@ -83,10 +83,11 @@
             this.layer = this.map.createLayer('Pacman');
 		
             this.dots = this.add.physicsGroup();
+		 this.dots3 = this.add.physicsGroup();
 	   
 		
             this.map.createFromTiles(7, this.safetile, 'dot', this.layer, this.dots);
-	    this.map.createFromTiles(9, this.safetile, 'dots', this.layer, this.dots);
+	    this.map.createFromTiles(9, this.safetile, 'dot3', this.layer, this.dots);
            
 		
 		//  The dots will need to be offset by 6px to put them back in the middle of the grid
@@ -223,8 +224,8 @@
         },
 	    
 	    
-	    eatDots: function (pacman, dots) {
-           dots.kill();
+	    eatDot3: function (pacman, dot3) {
+           dot3.kill();
            
            var audio = new Audio('assets/bonus.mp3');
            audio.play()
