@@ -22,6 +22,17 @@
     <script type="text/javascript">
     var game = new Phaser.Game(448, 496, Phaser.AUTO);
     var Pacman = function (game) {
+        
+        
+         this.score=0;
+        this.scoreText='';
+	    
+        this.bonus=0;
+        this.bonusText='';
+	    
+	    this.lives=3;
+	    this.livesText='';
+        
         this.map = null;
         this.layer = null;
         this.pacman = null;
@@ -36,6 +47,8 @@
         this.current = Phaser.NONE;
         this.turning = Phaser.NONE;
     };
+        
+        
     Pacman.prototype = {
         init: function () {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
