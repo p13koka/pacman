@@ -183,7 +183,7 @@
        },
         eatDot: function (pacman, dot) {
             dot.kill();
-            var audio = new Audio('assets/pop.wav');
+            var audio = new Audio('assets/ring.mp3');
             audio.play()
             score += 10;
             scoreText.text = 'Score: ' + score;
@@ -201,11 +201,11 @@
        eatCherry: function (pacman, cherry) {
        
             cherry.kill();
-            var audio = new Audio('assets/pacman_eatfruit.wav');
-            audio.play()
-            score += 100;
+            var audio = new Audio('assets/bonus.mp3');
+           audio.play()
+            score += 50;
             scoreText.text = 'Score: ' + score;
-            bonus += 100;
+            bonus += 50;
             bonusText.text = 'Bonus: +' + bonus;
         }, 
         update: function () {
