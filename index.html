@@ -231,16 +231,15 @@
             serdot.kill();
             var audio = new Audio('assets/bonus.mp3');
            audio.play()
-             this.score += 15;
-           this.scoreText.text= 'Score: '+ this.score;
-	       this.bonus+=15;
-            this.bonusText.text= 'Bonus: ' + this.bonus;
-            
-	   
-            if(this.dots.total===0)
-            {
-                this.dots.callAll('revive');
-            }
+            this.score+=50;
+	   this.bonus+=50;															//____________________________6/4_____score____________________________
+           this.scoreText.text= 'Score: ' + this.score;
+	   this.bonusText.text= 'Bonus: ' + this.bonus;
+		
+           if (this.serdots.total === 0)
+           {
+               this.serdots.callAll('revive');
+           }
         },
         
         update: function () {
