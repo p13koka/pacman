@@ -57,6 +57,7 @@
             this.load.crossOrigin = 'anonymous';
             this.load.image('dot', 'assets/dot.png');
             this.load.image('cherry', 'assets/cherry.png');
+	      this.load.image('coin','assets/serdot.jpg');
             this.load.image('tiles', 'assets/pacman-tiles.png');
             this.load.spritesheet('pacman', 'assets/pacman.png', 32, 32);
             this.load.tilemap('map', 'assets/pacman-map.json', null, Phaser.Tilemap.TILED_JSON);
@@ -66,15 +67,20 @@
             this.map = this.add.tilemap('map');
             this.map.addTilesetImage('pacman-tiles', 'tiles');
             this.layer = this.map.createLayer('Pacman');
-            this.dots = this.add.physicsGroup();
+            
+		this.dots = this.add.physicsGroup();
             this.cherries = this.add.physicsGroup();
-            this.map.createFromTiles(7, this.safetile, 'dot', this.layer, this.dots);
-            this.map.createFromTiles(35, this.safetile, 'cherry', this.layer, this.cherries);
+	    this.serdots = this.add.physicsGroup();
+            
+		this.map.createFromTiles(7, this.safetile, 'dot', this.layer, this.dots);
+             this.map.createFromTiles(35, this.safetile, 'serdot', this.layer, this.serdots);
+		this.map.createFromTiles(35, this.safetile, 'cherry', this.layer, this.cherries);
             //  The dots will need to be offset by 6px to put them back in the middle of the grid
             this.dots.setAll('x', 6, false, false, 1);
             this.dots.setAll('y', 6, false, false, 1);
-            this.cherries.setAll('x', 6, false, false, 1);
-            this.cherries.setAll('y', 6, false, false, 1);
+		
+            this.serdots.setAll('x', 6, false, false, 1);
+            this.serdots.setAll('y', 6, false, false, 1);
             //  Pacman should collide with everything except the safe tile
             this.map.setCollisionByExclusion([this.safetile], true, this.layer);
             //  Position Pacman at grid location 14x17 (the +8 accounts for his anchor)
@@ -220,9 +226,9 @@
             
         },
         
-       eatCherry: function (pacman, cherry) {
+       eatserdot: function (pacman, serdot) {
        
-            cherry.kill();
+            serdot.kill();
             var audio = new Audio('assets/bonus.mp3');
            audio.play()
              this.bonus += 50;
