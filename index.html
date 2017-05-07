@@ -18,14 +18,8 @@
 </audio>
     
     <script type="text/javascript">
-    var score = 0;
-    var scoreText;    
-    var lives = 3;
-    var livesText;
-        
-    var bonus = 0;
-    var bonusText;
-    var game = new Phaser.Game(448, 496, Phaser.AUTO);
+     
+    var game = new Phaser.Game(500, 550, Phaser.AUTO);
     var Pacman = function (game) {
         this.map = null;
         this.layer = null;
@@ -40,6 +34,13 @@
         this.opposites = [ Phaser.NONE, Phaser.RIGHT, Phaser.LEFT, Phaser.DOWN, Phaser.UP ];
         this.current = Phaser.NONE;
         this.turning = Phaser.NONE;
+        
+        this.score=0;
+        this.scoreText='';
+	    
+	this.bonus=0;
+        this.bonusText='';
+        
     };
     Pacman.prototype = {
         init: function () {
@@ -68,7 +69,7 @@
             this.dots = this.add.physicsGroup();
             this.cherries = this.add.physicsGroup();
             this.map.createFromTiles(7, this.safetile, 'dot', this.layer, this.dots);
-            this.map.createFromTiles(16, this.safetile, 'cherry', this.layer, this.cherries);
+            this.map.createFromTiles(35, this.safetile, 'cherry', this.layer, this.cherries);
             //  The dots will need to be offset by 6px to put them back in the middle of the grid
             this.dots.setAll('x', 6, false, false, 1);
             this.dots.setAll('y', 6, false, false, 1);
@@ -85,10 +86,34 @@
             this.cursors = this.input.keyboard.createCursorKeys();
             this.pacman.play('munch');
             this.move(Phaser.LEFT);
-            scoreText = game.add.text(10,0,'Score: 0', {font: '15px Verdana',  fill: '#FFFF00'});
-            bonusText = game.add.text(180,0,'Bonus: +0', {font: '13px Verdana',  fill: '#FFFF00'});
-            livesText = game.add.text(330,0,'Life: 3', {font: '17px Verdana',  fill: '#FFFF00'});
-        },
+           	
+	    this.bonusText = game.add.text(350, 500, 'Bonus: 0', { fontSize: '20px Arial', fill: 'orange' });
+            
+            
+            this.scoreText = game.add.text(0, 500, 'Score: 0', { fontSize: '20px Arial', fill: 'yellow' });
+            
+            lives = game.add.group();
+            game.add.text(game.world.width - 340, 500, 'Lives : ', { fontSize: '20px Arial', fill: 'white' });
+            
+            for (var i = 0; i < 3; i++) 
+		    {
+			var pacman = lives.create(game.world.width - 235 + (30 * i), 517, 'pacman');
+			pacman.anchor.setTo(0.5, 0.5);
+			pacman.angle = 90;
+			pacman.alpha = 0.4;
+		    }
+	    var sprite = game.add.sprite(317, 465, 'cherry');
+	    var sprite1 = game.add.sprite(87, 265, 'cherry');
+	    var sprite2 = game.add.sprite(320, 192, 'cherry');
+            
+		
+	    
+	    game.add.tween(sprite).to( { alpha: 0 }, 30000, Phaser.Easing.Linear.None, true);
+	    game.add.tween(sprite1).to( { alpha: 0 }, 50000, Phaser.Easing.Linear.None, true);
+            game.add.tween(sprite2).to( { alpha: 0 }, 70000, Phaser.Easing.Linear.None, true);
+           
+	
+	},
         checkKeys: function () {
             if (this.cursors.left.isDown && this.current !== Phaser.LEFT)
             {
@@ -185,17 +210,14 @@
             dot.kill();
             var audio = new Audio('assets/ring.mp3');
             audio.play()
-            score += 10;
-            scoreText.text = 'Score: ' + score;
+             this.score += 10;
+             this.scoreText.text = 'Score: ' +  this.score;
             if (this.dots.total === 0)
             {
                 this.dots.callAll('revive');
             }
             
-            if (score % 770 === 0)
-            {
-            	this.cherries.callAll('revive');
-            }
+            
         },
         
        eatCherry: function (pacman, cherry) {
@@ -203,11 +225,17 @@
             cherry.kill();
             var audio = new Audio('assets/bonus.mp3');
            audio.play()
-            score += 50;
-            scoreText.text = 'Score: ' + score;
-            bonus += 50;
-            bonusText.text = 'Bonus: +' + bonus;
-        }, 
+             this.bonus += 50;
+           this.bonusText.text= 'Bonus: '+ this.bonus;
+            this.scoreText.text= 'Score: ' + this.bonus;
+            
+	   
+            if(this.dots.total===0)
+            {
+                this.dots.callAll('revive');
+            }
+        },
+        
         update: function () {
             this.physics.arcade.collide(this.pacman, this.layer);
             this.physics.arcade.overlap(this.pacman, this.dots, this.eatDot, null, this);
