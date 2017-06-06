@@ -139,12 +139,12 @@
             this.physics.arcade.enable(this.enemy);                      
             this.enemy.body.velocity.x = this.enemySpeed;
             //enemy2
-            this.enemy2 = this.add.sprite((13*16), (30*16),'enemy',0);            
+            this.enemy2 = this.add.sprite((13*16), (22*16),'enemy',0);            
             this.physics.arcade.enable(this.enemy2);                      
             this.enemy2.body.velocity.x = -this.enemySpeed;
              
             //enemy3
-            this.enemy3 = this.add.sprite((6*16), (24*16),'enemy',0);            
+            this.enemy3 = this.add.sprite((6*16), (20*16),'enemy',0);            
             this.physics.arcade.enable(this.enemy3);                      
             this.enemy3.body.velocity.y = this.enemySpeed;
             //enemy4
@@ -289,7 +289,7 @@
 	damage: function (pacman, enemy) {
    				
    				var index = this.lifes
-        		live = this.lifes.getFirstAlive();
+        		live = this.lives.getFirstAlive();
 			 	if(live)
 			 	{
 			        live.kill();
@@ -310,7 +310,7 @@
 			 		this.dots.callAll('revive');
                 	this.serdots.callAll('revive');
 			this.cherrys.callAll('revive');
-                	this.lifes.callAll('revive');
+                	this.lives.callAll('revive');
                 	this.enemys.callAll('revive');
                 	//Reset score counter
                 	this.score = 0;
