@@ -20,7 +20,9 @@
     <script type="text/javascript">
      
     var game = new Phaser.Game(500, 550, Phaser.AUTO);
+    
     var Pacman = function (game) {
+    
         this.map = null;
         this.layer = null;
         this.pacman = null;
@@ -40,8 +42,16 @@
 	    
 	this.bonus=0;
         this.bonusText='';
+	
+	this.enemySpeed=-150;
+	this.life=2;
+	
+	var spacebar;
+	this.isDead = 0;
         
     };
+    
+    
     Pacman.prototype = {
         init: function () {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -59,6 +69,7 @@
             this.load.image('cherry', 'assets/cherry.png');
 	      this.load.image('serdot','assets/serdot.png');
             this.load.image('tiles', 'assets/pacman-tiles.png');
+	    this.load.image('enemy', 'assets/enemy.png');  
             this.load.spritesheet('pacman', 'assets/pacman.png', 32, 32);
             this.load.tilemap('map', 'assets/pacman-map.json', null, Phaser.Tilemap.TILED_JSON);
             //  Needless to say, graphics (C)opyright Namco
@@ -98,6 +109,10 @@
             
             this.scoreText = game.add.text(0, 500, 'Score: 0', { fontSize: '20px Arial', fill: 'yellow' });
             
+	    
+	    this.gameOver = game.add.text(170, 150, '  Press\n  Space\n      to\n\nTry again', { fontSize: '5px Arial', fill: 'yellow' });
+            this.gameOver.visible = false;
+
             lives = game.add.group();
             game.add.text(game.world.width - 340, 500, 'Lives : ', { fontSize: '20px Arial', fill: 'white' });
             
@@ -118,7 +133,35 @@
 	    game.add.tween(sprite1).to( { alpha: 0 }, 50000, Phaser.Easing.Linear.None, true);
             game.add.tween(sprite2).to( { alpha: 0 }, 70000, Phaser.Easing.Linear.None, true);
            
+	         //Enemies
+            //enemy1          
+            this.enemy = this.add.sprite((13*16), (11*16),'enemy',0);            
+            this.physics.arcade.enable(this.enemy);                      
+            this.enemy.body.velocity.x = this.enemySpeed;
+            //enemy2
+            this.enemy2 = this.add.sprite((13*16), (30*16),'enemy',0);            
+            this.physics.arcade.enable(this.enemy2);                      
+            this.enemy2.body.velocity.x = -this.enemySpeed;
+             
+            //enemy3
+            this.enemy3 = this.add.sprite((6*16), (24*16),'enemy',0);            
+            this.physics.arcade.enable(this.enemy3);                      
+            this.enemy3.body.velocity.y = this.enemySpeed;
+            //enemy4
+            this.enemy4 = this.add.sprite((21*16), (24*16),'enemy',0);            
+            this.physics.arcade.enable(this.enemy4);                      
+            this.enemy4.body.velocity.y = -this.enemySpeed;
+            this.enemys = this.add.group();
+            this.enemys.add(this.enemy);
+            this.enemys.add(this.enemy2);
+            this.enemys.add(this.enemy3);
+            this.enemys.add(this.enemy4);
 	
+	
+            this.cursors = this.input.keyboard.createCursorKeys();
+            spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            this.pacman.play('munch');
+            this.move(Phaser.LEFT);
 	},
         checkKeys: function () {
             if (this.cursors.left.isDown && this.current !== Phaser.LEFT)
@@ -242,11 +285,99 @@
            }
         },
         
+	
+	damage: function (pacman, enemy) {
+   				
+   				var index = this.lifes
+        		live = this.lifes.getFirstAlive();
+			 	if(live)
+			 	{
+			        live.kill();
+			        enemy.kill();
+			        enemy.play();
+			        this.hearts -= 1;
+			 	}
+			 	else
+			 	{
+			 		//Kill the player
+			 		pacman.kill();
+			 		this.isDead = 1
+			 		//Game over sound
+			 		over.play(); 
+			 		//Gameover screen
+			 		this.gameOver.visible = true;
+			 		//Reset the map
+			 		this.dots.callAll('revive');
+                	this.serdots.callAll('revive');
+			this.cherrys.callAll('revive');
+                	this.lifes.callAll('revive');
+                	this.enemys.callAll('revive');
+                	//Reset score counter
+                	this.score = 0;
+            		this.scoreLabel.text = 'Score: ' + this.score;
+            		
+            		//Reset bonus counter
+            		this.bonus = 1;
+            		this.bonusLabel.text = 'Bonus: x'+ this.bonus; 
+			 	} 	            
+                      
+        },
+	
+	
         update: function () {
+	
+	if (spacebar.isDown && this.isDead == 1)
+	        {
+	            window.location.reload(false); 
+	            this.isDead = 0;
+	            this.gameOver.visible = false; 
+	            
+	        }
+	
             this.physics.arcade.collide(this.pacman, this.layer);
             this.physics.arcade.overlap(this.pacman, this.dots, this.eatDot, null, this);
             this.physics.arcade.overlap(this.pacman, this.serdots, this.eatserdot, null, this);
             
+	    
+	     if(this.enemy.x < 9 * 16)
+            {
+            	this.enemy.body.velocity.x  = 100;
+            }
+            else if ( this.enemy.x > 18 * 16)
+           	{
+           		this.enemy.body.velocity.x  = -100;
+           	}
+            //enemy2 patrolling
+            if(this.enemy2.x < 9 * 16)
+            {
+            	this.enemy2.body.velocity.x  = 100;
+            }
+            else if ( this.enemy2.x > 18 * 16)
+           	{
+           		this.enemy2.body.velocity.x  = -100;
+           	}
+            //enemy3 patrolling
+            if(this.enemy3.y < 5 * 16)
+            {
+            	this.enemy3.body.velocity.y  = 100;
+            }
+            else if ( this.enemy3.y > 20 * 16)
+           	{
+           		this.enemy3.body.velocity.y  = -100;
+           	}
+           	//enemy4 patrolling
+            if(this.enemy4.y < 5 * 16)
+            {
+            	this.enemy4.body.velocity.y  = 100;
+            }
+            else if ( this.enemy4.y > 20 * 16)
+           	{
+           		this.enemy4.body.velocity.y  = -100;
+           	}           
+	    
+	    
+	    
+	    
             this.marker.x = this.math.snapToFloor(Math.floor(this.pacman.x), this.gridsize) / this.gridsize;
             this.marker.y = this.math.snapToFloor(Math.floor(this.pacman.y), this.gridsize) / this.gridsize;
             //  Update our grid sensors
